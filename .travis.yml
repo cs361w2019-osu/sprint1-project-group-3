@@ -3,5 +3,9 @@ language: java
 script: 
   - mvn install
 
-  jdk:
-    - openjdk7
+jdk:
+  - oraclejdk8
+  - oraclejdk9
+  - oraclejdk11
+  - openjdk8
+  - openjdk-ea
