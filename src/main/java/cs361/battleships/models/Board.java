@@ -140,8 +140,17 @@ public class Board {
 		return this.ships;
 	}
 
+
 	public void setShips(List<Ship> ships) {
 		this.ships = ships;
+	}
+
+	public List<Square> getSonarpulses(){
+		return this.sonarpulses;
+	}
+
+	public void setSonarpulses(List<Square> pulses){
+		this.sonarpulses = pulses;
 	}
 
 	public List<Result> getAttacks() {

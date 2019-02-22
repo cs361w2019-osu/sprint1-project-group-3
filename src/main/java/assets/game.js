@@ -64,12 +64,13 @@ function markHits(board, elementId, surrenderText) {
 
 }
 
-/*
+
 function markSonar(board){
+    board.sonarpulses.forEach((pulse) => {
 
-
+    }
 }
-*/
+
 
 function redrawGrid() {
     Array.from(document.getElementById("opponent").childNodes).forEach((row) => row.remove());
