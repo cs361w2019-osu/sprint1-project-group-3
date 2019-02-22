@@ -1,4 +1,4 @@
-package cs361.battleships.models;
+package cs361.battleships;
 
 import org.junit.Test;
 
