@@ -1,5 +1,6 @@
 
 var isSetup = true;
+var sonar = true;
 var placedShips = 0;
 var game;
 var shipType = [];
@@ -124,7 +125,16 @@ function cellClick() {
                 document.getElementById("is_vertical").style.visibility = "hidden";
             }
         });
-    } else {
+
+    }
+   /* else if(!isSetup && sonar){
+        sendXhr("POST", "/sonar", {game: game, x: row, y: col}, function(data) {
+           game = data;
+           redrawGrid();
+           sonar =false;
+        });
+    }*/
+    else {
 
         sendXhr("POST", "/attack", {game: game, x: row, y: col}, function(data) {
             game = data;
@@ -149,7 +159,9 @@ function sendXhr(method, url, data, handler) {
             if (placedShips == 3) {
                 showError("Cannot target that spot");
                 return;
-            } else {
+            }
+
+            else {
                 showError("Out of bounds");
                 return;
             }
@@ -189,6 +201,10 @@ function place(size) {
 
 function toggleVertical() {
     vertical = !vertical;
+}
+
+function toggleSonar() {
+    sonar = !sonar;
 }
 
 function initGame() {
