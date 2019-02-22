@@ -8,8 +8,9 @@ import java.util.List;
 public class Board {
 
 
-	private List<Ship> ships;               //List of current boards ships
-	private List<Result> attacks;   // List of all previous attack attempts
+	private List<Ship> ships;               		
+	private List<Result> attacks;   				
+	private List<Sonar>  sonarpulses;
 
 	/*
 	DO NOT change the signature of this method. It is used by the grading scripts.
@@ -17,6 +18,8 @@ public class Board {
 	public Board() {
 		this.ships = new ArrayList<Ship>();
 		this.attacks = new ArrayList<Result>();
+		//this.sonarpulses = new ArrayList<Square>();
+		this.sonarpulses = new ArrayList<Sonar>();
 	}
 
 	/*
@@ -54,6 +57,58 @@ public class Board {
 
 		
 		this.ships.add(toAdd);
+
+		return true;
+	}
+
+	public boolean placeSonar(int x, char y){
+		Square sonarCenter = new Square(x,y);
+		Sonar toSonarPulse = new Sonar();
+		toSonarPulse.setCenter(sonarCenter);
+
+
+		//check if it's being placed on the board in a valid manner
+		if(1 > x || x > 10)
+			return false;
+		if('A' > y || y > 'J')
+			return false;
+
+
+		//check that it's not placed on top of any other Sonar Pulse
+		for(Sonar other : this.sonarpulses){
+			Square othercenter = other.getCenter();
+			if(othercenter.getRow() == x || othercenter.getColumn() == y){
+				return false;
+			}
+		}
+
+		// upper half of diamond
+		for(int i = 0; i < 5; i++) {
+			int width = 1 + 2 * ((i < 2) ? i : 4 - i);
+			for(int j = -(width/2); j < (width/2)+1; j++) {
+				Square target = new Square(x - 2 + i, (char)(y+j));
+				if(target.getRow() < 1 || target.getRow() > 10 || target.getColumn() < 'A' || target.getColumn() > 'J')
+					continue;
+
+
+				boolean found = false;
+				for(Ship s : ships) {
+					for(Square sq : s.getOccupiedSquares()) {
+						if (sq.equals(target) && !s.getCaptainsQuarters().equals(target)) {
+							toSonarPulse.addShipSquare(sq);
+							found = true;
+						}
+					}
+				}
+
+				if(!found) {
+					toSonarPulse.addEmptySquare(target);
+				}
+			}
+		}
+
+
+		this.sonarpulses.add(toSonarPulse);
 
 		return true;
 	}
@@ -105,6 +160,7 @@ public class Board {
 		return this.ships;
 	}
 
+
 	public void setShips(List<Ship> ships) {
 		this.ships.clear();
 
@@ -115,9 +171,21 @@ public class Board {
 
 	}
 
+	/*public List<Square> getSonarpulses(){
+		return this.sonarpulses;
+	}*/
+	public List<Sonar> getSonarpulses() {
+		return this.sonarpulses;
+	}
+	//public void setSonarpulses(List<Square> pulses){
+	//	this.sonarpulses = pulses;
+	//}
+	public void setSonarpulses(List<Sonar> pulses){
+		this.sonarpulses = pulses;
+	}
+
 	public List<Result> getAttacks() {
 	    //should return all previous attacks
-		//TODO implement
 		return this.attacks;
 	}
 

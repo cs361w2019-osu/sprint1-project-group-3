@@ -3,6 +3,7 @@ package controllers;
 import com.google.inject.Singleton;
 import cs361.battleships.models.Game;
 import cs361.battleships.models.Ship;
+import cs361.battleships.models.Sonar;
 import cs361.battleships.ShipFactory;
 import ninja.Context;
 import ninja.Result;
@@ -24,6 +25,16 @@ public class ApplicationController {
         Game game = g.getGame();
         Ship ship = ShipFactory.Build(g.getShipType());
         boolean result = game.placeShip(ship, g.getActionRow(), g.getActionColumn(), g.isVertical());
+        if (result) {
+            return Results.json().render(game);
+        } else {
+            return Results.badRequest();
+        }
+    }
+
+    public Result sonar(Context context, SonarGameAction g) {
+        Game game = g.getGame();
+        boolean result = game.sonar(g.getActionRow(), g.getActionColumn());
         if (result) {
             return Results.json().render(game);
         } else {

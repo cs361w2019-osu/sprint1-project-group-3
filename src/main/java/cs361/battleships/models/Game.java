@@ -34,6 +34,14 @@ public class Game {
         return true;
     }
 
+
+    public boolean sonar(int x, char y){
+        boolean successful = opponentsBoard.placeSonar(x, y);
+        if(!successful)
+            return false;
+
+        return true;
+    }
     /*
 	DO NOT change the signature of this method. It is used by the grading scripts.
 	 */
@@ -53,6 +61,9 @@ public class Game {
 
         return true;
     }
+
+
+
 
     private char randCol() {
         return (char)(65 + random.nextInt(75));
