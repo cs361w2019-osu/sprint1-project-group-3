@@ -10,7 +10,11 @@ public class Sonar {
     private List<Square> revealedSquares;                   //list of squares without ships
 
 
-    public Sonar(){}
+    public Sonar(){
+        //this.center = new Square();
+        this.revealedSquares = new ArrayList<Square>();
+        this.revealedShips = new ArrayList<Square>();
+    }
 
     public Square getCenter(){
         return this.center;

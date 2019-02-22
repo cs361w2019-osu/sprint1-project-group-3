@@ -3,6 +3,7 @@ package controllers;
 import com.google.inject.Singleton;
 import cs361.battleships.models.Game;
 import cs361.battleships.models.Ship;
+import cs361.battleships.models.Sonar;
 import ninja.Context;
 import ninja.Result;
 import ninja.Results;

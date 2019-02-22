@@ -1,6 +1,7 @@
 
 var isSetup = true;
 var sonar = true;
+var pulsesRemaining = 2;
 var placedShips = 0;
 var game;
 var shipType = [];
@@ -69,7 +70,7 @@ function markHits(board, elementId, surrenderText) {
 function markSonar(board){
     board.sonarpulses.forEach((pulse) => {
        pulse.revealedShips.forEach((square) => {
-            document.getElementById(elementId).rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("revealed");
+            document.getElementById("opponent").rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("revealed");
        });
     });
 }
@@ -112,6 +113,8 @@ function registerCellListener(f) {
 function cellClick() {
     let row = this.parentNode.rowIndex + 1;
     let col = String.fromCharCode(this.cellIndex + 65);
+
+
     if (isSetup) {
 
         sendXhr("POST", "/place", {game: game, shipType: shipType[0], x: row, y: col, isVertical: vertical}, function(data) {
@@ -127,13 +130,16 @@ function cellClick() {
         });
 
     }
-   /* else if(!isSetup && sonar){
+    else if(sonar && pulsesRemaining >0 && !isSetup){
         sendXhr("POST", "/sonar", {game: game, x: row, y: col}, function(data) {
            game = data;
+           console.log("Sonar has been used!");
            redrawGrid();
-           sonar =false;
         });
-    }*/
+
+        pulsesRemaining--;
+
+    }
     else {
 
         sendXhr("POST", "/attack", {game: game, x: row, y: col}, function(data) {
