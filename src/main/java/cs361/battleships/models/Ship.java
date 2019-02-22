@@ -25,18 +25,20 @@ public class Ship {
 		}
 	}
 
+
 	@JsonProperty 
-	private List<Square> occupiedSquares;
-
-	private ShipType shipType;
-	private int health;
-
+	protected List<Square> occupiedSquares;
+	protected ShipType shipType;
+	protected int health;
+	protected boolean cqHit;
+	protected Square captainsQuarters;
 
 	public Ship() {
 		this("INVALID");
 	}
 	
 	public Ship(String kind) {
+		this.cqHit = false;
 		this.occupiedSquares = new ArrayList<Square>();
 		try {
 			this.shipType = ShipType.valueOf(kind);
@@ -48,6 +50,7 @@ public class Ship {
 	}
 
 	public Ship(Ship other) {
+		this.cqHit = other.getcqHit();
 		this.shipType = other.getShipType();
 		this.occupiedSquares = new ArrayList<Square>();
 		for(int i = 0; i < other.getOccupiedSquares().size(); i++) {
@@ -69,6 +72,14 @@ public class Ship {
 		return false;
 	}
 
+	public boolean getcqHit() {
+		return this.cqHit;
+	}
+
+	public void setcqHit(boolean cq) {
+		this.cqHit = cq;
+	}
+
 	public ShipType getShipType() {
 		return this.shipType;
 	}
@@ -77,8 +88,8 @@ public class Ship {
 		return this.health;
 	}
 
-	private void takeDamage(int x, char y){
-		this.health-- ;
+	public void setHealth(int health) {
+		this.health = health;
 	}
 
 	public void setOccupiedSquaresByOrientation(int row, char col, boolean verticle) {
@@ -95,6 +106,10 @@ public class Ship {
 			}
 			this.occupiedSquares.add(s);
 		}
+		if(occupiedSquares.size() > 0)
+			this.captainsQuarters = new Square(
+				occupiedSquares.get(occupiedSquares.size() - 2).getRow(), 
+				occupiedSquares.get(occupiedSquares.size() - 2).getColumn());
 	}
 
 	public Result processAttack(int x, char y) {
@@ -105,26 +120,51 @@ public class Ship {
 		// check if the ship was hit
 		for(Square s : this.occupiedSquares) {
 			if(s.getRow() == x && s.getColumn() == y) {
-				// check for captains quarters
+				
+				
+				if(s.getHit()) {
+					res.setResult(AtackStatus.INVALID);
+					return res;
+				}
 
 				res.setResult(AtackStatus.HIT);
+				s.setHit(true);
 
-				// handle capitans quarters
-				if(true) {
-					this.health--;
-					if(this.health <= 0) {
+				Square cq = getCaptainsQuarters();
+				if(s.getRow() == cq.getRow() && s.getColumn() == cq.getColumn()) {
+					if(!cqHit) {
+						res.setResult(AtackStatus.MISS);
+						s.setHit(false);
+						this.cqHit = true;
+						return res;
+					} else {
 						res.setResult(AtackStatus.SUNK);
+						this.health = 0;
+						for(Square sq : occupiedSquares) 
+                        	sq.setHit(true);
+						return res;
 					}
-				} else {
+				}
+				
+				if(!s.getHit())
+					this.health--;
+				if(this.health <= 0) {
 					res.setResult(AtackStatus.SUNK);
 				}
 
-				
 				return res;
 			}
 		}
 
 		return null;
+	}
+
+	public Square getCaptainsQuarters() {
+		return this.captainsQuarters;
+	}
+
+	public void setCaptainsQuarters(Square s) {
+		this.captainsQuarters = s;
 	}
 
 	public List<Square> getOccupiedSquares() {

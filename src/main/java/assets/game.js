@@ -43,7 +43,8 @@ function markHits(board, elementId, surrenderText) {
             document.getElementById(elementId + "-" + attack.ship.shipType.toLowerCase()).classList.add("secondary-color");                              //also changes color of said ship name
             className = "sink";
             attack.ship.occupiedSquares.forEach((square) => {                                                                                           //if ship sunk, grab all occupied squares of ship
-                document.getElementById(elementId).rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add(className);  //set all ship elements to sink class name
+                document.getElementById(elementId).rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.remove("miss");  //set all ship elements to sink class name
+                document.getElementById(elementId).rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("sink"); 
             });
         } else if (attack.result === "SURRENDER") {                                  
             showError(surrenderText);
@@ -75,6 +76,11 @@ function redrawGrid() {
 
     game.playersBoard.ships.forEach((ship) => ship.occupiedSquares.forEach((square) => {
         document.getElementById("player").rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("occupied");
+    }));
+
+    // TOGGLE FOR HACKS
+    game.opponentsBoard.ships.forEach((ship) => ship.occupiedSquares.forEach((square) => {
+        document.getElementById("opponent").rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("occupied");
     }));
 
     markHits(game.opponentsBoard, "opponent", "You won the game");
