@@ -64,39 +64,22 @@ public class Board {
 		Result attackResult = new Result();
 		attackResult.setLocation(new Square(x, y));		//
 		attackResult.setResult(AtackStatus.MISS);				//should default to Miss if not changed by any others
-		//check if valid
+		
+		//check if the player or computer targeted something on the screen
 		if(x < 0 || x >10 || y < 'A' || y > 'J'){			//if attack attempt is outside bounds of board, set status to invalid
 			attackResult.setResult(AtackStatus.INVALID);
 			return attackResult;
 		}
 
-        for( Result r : attacks){
-        	Square s = r.getLocation();
-        	if(s.getRow()== x && s.getColumn() == y){
-        		attackResult.setResult(AtackStatus.INVALID);
-        		return attackResult;
-			}
-		}
-
-        for (Ship s : ships){								//for each ship
-			for (Square sq : s.getOccupiedSquares()) {		//for each square occupied by the current ship
-				if(sq.getRow()==x && sq.getColumn()==y){
-					attackResult.setResult(AtackStatus.HIT);
-					s.takeDamage(x,y);
-					if(s.getHealth()==0){
-						attackResult.setResult(AtackStatus.SUNK);
-						attackResult.setShip(new Ship(s));
-					}
-					break;
-				}
-			}
-			if(attackResult.getResult()==AtackStatus.HIT || attackResult.getResult()==AtackStatus.SUNK ){
+		for(Ship s : this.ships) {
+			Result res = s.processAttack(x, y);
+			if(res != null) {
+				attackResult = res;
 				break;
 			}
 		}
 
-
-        int totalHealth = 0;
+		int totalHealth = 0;
 		for(Ship s : ships){
 			totalHealth+= s.getHealth();
 		}
@@ -104,13 +87,50 @@ public class Board {
 			attackResult.setResult(AtackStatus.SURRENDER);
 		}
 
-
-		this.attacks.add(attackResult);             // add to list of old attack attempts to compare against later
-		//TODO check if hit below
-
-
-
+		this.attacks.add(attackResult);
 		return attackResult;
+
+        // for( Result r : attacks){
+        // 	Square s = r.getLocation();
+        // 	if(s.getRow()== x && s.getColumn() == y){
+        // 		attackResult.setResult(AtackStatus.INVALID);
+        // 		return attackResult;
+		// 	}
+		// }
+
+        // for (Ship s : ships){								//for each ship
+		// 	for (Square sq : s.getOccupiedSquares()) {		//for each square occupied by the current ship
+		// 		if(sq.getRow()==x && sq.getColumn()==y){
+		// 			attackResult.setResult(AtackStatus.HIT);
+		// 			s.takeDamage(x,y);
+		// 			if(s.getHealth()==0){
+		// 				attackResult.setResult(AtackStatus.SUNK);
+		// 				attackResult.setShip(new Ship(s));
+		// 			}
+		// 			break;
+		// 		}
+		// 	}
+		// 	if(attackResult.getResult()==AtackStatus.HIT || attackResult.getResult()==AtackStatus.SUNK ){
+		// 		break;
+		// 	}
+		// }
+
+
+        // int totalHealth = 0;
+		// for(Ship s : ships){
+		// 	totalHealth+= s.getHealth();
+		// }
+		// if(totalHealth<=0){
+		// 	attackResult.setResult(AtackStatus.SURRENDER);
+		// }
+
+
+		// this.attacks.add(attackResult);             // add to list of old attack attempts to compare against later
+		// //TODO check if hit below
+
+
+
+		// return attackResult;
 	}
 
 	public List<Ship> getShips() {
