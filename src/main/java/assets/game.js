@@ -64,12 +64,15 @@ function markHits(board, elementId, surrenderText) {
 
 }
 
-
+/*
 function markSonar(board){
     board.sonarpulses.forEach((pulse) => {
-
+        //TODO check all around pulse for ships, unless off the board, and unless that spot is already marked
+        for (i=-2; i<2; i++){
+            //check the 2 squares above, below, to the left and right of sonar pulse
+        }
     }
-}
+}*/
 
 
 function redrawGrid() {

@@ -68,6 +68,13 @@ public class Board {
 			}
 		}
 
+		// go through ships
+		// check if the sonar pulse touches the ship
+		// add it to the with junk list
+		// the without junk list is a list of squares
+		// that are touched by the pulse, but do not have
+		// any ships in them
+
 		this.sonarpulses.add(toSonarPulse);
 
 		return true;
@@ -129,7 +136,6 @@ public class Board {
 
 
 		this.attacks.add(attackResult);             // add to list of old attack attempts to compare against later
-		//TODO check if hit below
 
 
 
@@ -155,7 +161,6 @@ public class Board {
 
 	public List<Result> getAttacks() {
 	    //should return all previous attacks
-		//TODO implement
 		return this.attacks;
 	}
 
