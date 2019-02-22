@@ -4,6 +4,7 @@ import com.google.inject.Singleton;
 import cs361.battleships.models.Game;
 import cs361.battleships.models.Ship;
 import cs361.battleships.models.Sonar;
+import cs361.battleships.ShipFactory;
 import ninja.Context;
 import ninja.Result;
 import ninja.Results;
@@ -22,7 +23,7 @@ public class ApplicationController {
 
     public Result placeShip(Context context, PlacementGameAction g) {
         Game game = g.getGame();
-        Ship ship = new Ship(g.getShipType());
+        Ship ship = ShipFactory.Build(g.getShipType());
         boolean result = game.placeShip(ship, g.getActionRow(), g.getActionColumn(), g.isVertical());
         if (result) {
             return Results.json().render(game);

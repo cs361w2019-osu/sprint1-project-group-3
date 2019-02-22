@@ -1,5 +1,7 @@
 package cs361.battleships.models;
 
+
+import cs361.battleships.ShipFactory;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,19 +26,24 @@ public class Board {
 	DO NOT change the signature of this method. It is used by the grading scripts.
 	 */
 	public boolean placeShip(Ship ship, int x, char y, boolean isVertical) {
-		Ship toAdd = new Ship(ship);
+		Ship toAdd = ShipFactory.Build(ship);
 		toAdd.setOccupiedSquaresByOrientation(x, y, isVertical);	
 
-		if(toAdd.getShipType() == Ship.ShipType.INVALID) 
+		if(toAdd.getShipType() == Ship.ShipType.INVALID) {
 			return false;
+		}
 
 		// check that each occupied square is valid
 		for(Square s : toAdd.getOccupiedSquares()) {
-			if(0 > s.getRow() || s.getRow() > 10)
+			if(0 > s.getRow() || s.getRow() > 10) {
 				return false;
-			if('A' > s.getColumn() || s.getColumn() > 'J')
+			}
+			if('A' > s.getColumn() || s.getColumn() > 'J') {
 				return false;
+			}
 		}
+
+
 
 		// check that there are no shipwise collisions
 		// also check that the same board cannot have two of 
@@ -48,6 +55,7 @@ public class Board {
 				return false;
 		}
 
+		
 		this.ships.add(toAdd);
 
 		return true;
@@ -127,39 +135,22 @@ public class Board {
 		Result attackResult = new Result();
 		attackResult.setLocation(new Square(x, y));		//
 		attackResult.setResult(AtackStatus.MISS);				//should default to Miss if not changed by any others
-		//check if valid
+		
+		//check if the player or computer targeted something on the screen
 		if(x < 0 || x >10 || y < 'A' || y > 'J'){			//if attack attempt is outside bounds of board, set status to invalid
 			attackResult.setResult(AtackStatus.INVALID);
 			return attackResult;
 		}
 
-        for( Result r : attacks){
-        	Square s = r.getLocation();
-        	if(s.getRow()== x && s.getColumn() == y){
-        		attackResult.setResult(AtackStatus.INVALID);
-        		return attackResult;
-			}
-		}
-
-        for (Ship s : ships){								//for each ship
-			for (Square sq : s.getOccupiedSquares()) {		//for each square occupied by the current ship
-				if(sq.getRow()==x && sq.getColumn()==y){
-					attackResult.setResult(AtackStatus.HIT);
-					s.takeDamage(x,y);
-					if(s.getHealth()==0){
-						attackResult.setResult(AtackStatus.SUNK);
-						attackResult.setShip(new Ship(s));
-					}
-					break;
-				}
-			}
-			if(attackResult.getResult()==AtackStatus.HIT || attackResult.getResult()==AtackStatus.SUNK ){
+		for(Ship s : this.ships) {
+			Result res = s.processAttack(x, y);
+			if(res != null) {
+				attackResult = res;
 				break;
 			}
 		}
 
-
-        int totalHealth = 0;
+		int totalHealth = 0;
 		for(Ship s : ships){
 			totalHealth+= s.getHealth();
 		}
@@ -167,12 +158,10 @@ public class Board {
 			attackResult.setResult(AtackStatus.SURRENDER);
 		}
 
-
-		this.attacks.add(attackResult);             // add to list of old attack attempts to compare against later
-
-
-
+		this.attacks.add(attackResult);
 		return attackResult;
+
+       
 	}
 
 	public List<Ship> getShips() {
@@ -181,7 +170,13 @@ public class Board {
 
 
 	public void setShips(List<Ship> ships) {
-		this.ships = ships;
+		this.ships.clear();
+
+		// ninja doesn't support inheritance very well(it doesn't support it period)
+		for(Ship s : ships) {
+			this.ships.add(ShipFactory.Duplicate(s));
+		}
+
 	}
 
 	/*public List<Square> getSonarpulses(){
