@@ -39,4 +39,15 @@ public class Square {
 	public void setHit(boolean b) {
 		this.hit = b;
 	}
+
+	@Override
+	public boolean equals(Object other) {
+		if(!(other instanceof Square)) {
+			return false;
+		}
+
+		Square o = (Square)other;
+
+		return getRow() == o.getRow() && getColumn() == o.getColumn();
+	}
 }

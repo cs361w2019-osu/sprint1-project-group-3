@@ -8,10 +8,10 @@ import java.util.List;
 public class Board {
 
 
-	private List<Ship> ships;               		//List of current boards ships
-	private List<Result> attacks;   				// List of all previous attack attempts
-//	private List<Square> sonarpulses;				//locations of sonar pulses
+	private List<Ship> ships;               		
+	private List<Result> attacks;   				
 	private List<Sonar>  sonarpulses;
+
 	/*
 	DO NOT change the signature of this method. It is used by the grading scripts.
 	 */
@@ -63,7 +63,6 @@ public class Board {
 
 	public boolean placeSonar(int x, char y){
 		Square sonarCenter = new Square(x,y);
-		//Sonar toSonarPulse = new Sonar(x, y);
 		Sonar toSonarPulse = new Sonar();
 		toSonarPulse.setCenter(sonarCenter);
 
@@ -84,18 +83,18 @@ public class Board {
 		}
 
 		// upper half of diamond
-		for(int i = 0; i < 3; i++) {
-			int width = 1 + 2*i;
-			for(int j = -(width/2)+1; j < (width/2); j++) {
-				Square target = new Square(x - 3 + i, (char)(y+j));
-				if(target.getRow() < 1 || target.getColumn() > 10 || target.getRow() < 'A' || target.getColumn() > 'J')
+		for(int i = 0; i < 5; i++) {
+			int width = 1 + 2 * ((i < 2) ? i : 4 - i);
+			for(int j = -(width/2); j < (width/2)+1; j++) {
+				Square target = new Square(x - 2 + i, (char)(y+j));
+				if(target.getRow() < 1 || target.getRow() > 10 || target.getColumn() < 'A' || target.getColumn() > 'J')
 					continue;
 
 
 				boolean found = false;
 				for(Ship s : ships) {
 					for(Square sq : s.getOccupiedSquares()) {
-						if (sq.getRow() == target.getRow() && sq.getColumn() == target.getColumn()) {
+						if (sq.equals(target) && !s.getCaptainsQuarters().equals(target)) {
 							toSonarPulse.addShipSquare(sq);
 							found = true;
 						}
@@ -105,16 +104,9 @@ public class Board {
 				if(!found) {
 					toSonarPulse.addEmptySquare(target);
 				}
-				// check that the square is still on the board
 			}
 		}
 
-		// go through ships
-		// check if the sonar pulse touches the ship
-		// add it to the with junk list
-		// the without junk list is a list of squares
-		// that are touched by the pulse, but do not have
-		// any ships in them
 
 		this.sonarpulses.add(toSonarPulse);
 

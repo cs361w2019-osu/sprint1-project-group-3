@@ -1,6 +1,6 @@
 
 var isSetup = true;
-var sonar = true;
+var sonar = false;
 var pulsesRemaining = 2;
 var placedShips = 0;
 var game;
@@ -41,6 +41,11 @@ function markHits(board, elementId, surrenderText) {
                 className = "hit";
         } else if (attack.result === "SUNK") {
 
+            // reveal the sonar button
+            if(pulsesRemaining === 2) {
+                document.getElementById("use_sonar").classList.remove("hidden");
+            }
+
             document.getElementById(elementId + "-" + attack.ship.shipType.toLowerCase()).classList.add("crossed-out");                                  //if sunken, cross out ship name
             document.getElementById(elementId + "-" + attack.ship.shipType.toLowerCase()).classList.add("secondary-color");                              //also changes color of said ship name
             className = "sink";
@@ -48,7 +53,12 @@ function markHits(board, elementId, surrenderText) {
                 document.getElementById(elementId).rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.remove("miss");  //set all ship elements to sink class name
                 document.getElementById(elementId).rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("sink"); 
             });
-        } else if (attack.result === "SURRENDER") {                                  
+        } else if (attack.result === "SURRENDER") {      
+            className = "sink";
+            attack.ship.occupiedSquares.forEach((square) => {                                                                                           //if ship sunk, grab all occupied squares of ship
+                document.getElementById(elementId).rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.remove("miss");  //set all ship elements to sink class name
+                document.getElementById(elementId).rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("sink"); 
+            });                            
             showError(surrenderText);
             document.getElementById("error-ok").removeEventListener("click", closeError);
             document.getElementById("error-ok").addEventListener("click", (e) => {
@@ -71,8 +81,12 @@ function markHits(board, elementId, surrenderText) {
 function markSonar(board){
     board.sonarpulses.forEach((pulse) => {
        pulse.revealedShips.forEach((square) => {
-            document.getElementById("opponent").rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("revealed");
+            document.getElementById("opponent").rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("occupied");
        });
+
+        pulse.revealedSquares.forEach((square) => {
+            document.getElementById("opponent").rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("revealed");
+        });
     });
 }
 
@@ -91,9 +105,9 @@ function redrawGrid() {
     }));
 
     // TOGGLE FOR HACKS
-    game.opponentsBoard.ships.forEach((ship) => ship.occupiedSquares.forEach((square) => {
-        document.getElementById("opponent").rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("occupied");
-    }));
+    // game.opponentsBoard.ships.forEach((ship) => ship.occupiedSquares.forEach((square) => {
+    //     document.getElementById("opponent").rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("occupied");
+    // }));
 
     markHits(game.opponentsBoard, "opponent", "You won the game");
     markHits(game.playersBoard, "player", "You lost the game");
@@ -102,8 +116,8 @@ function redrawGrid() {
 }
 
 var oldListener;
-function registerCellListener(f) {
-    let el = document.getElementById("player");
+function registerCellListener(f, elementId) {
+    let el = document.getElementById(elementId);
     for (i=0; i<10; i++) {
         for (j=0; j<10; j++) {
             let cell = el.rows[i].cells[j];
@@ -130,23 +144,29 @@ function cellClick() {
             placedShips++;
             if (placedShips == 3) {
                 isSetup = false;
-                registerCellListener((e) => {});
+                registerCellListener((e) => {}, "player");
                 document.getElementById("is_vertical").style.visibility = "hidden";
             }
         });
 
     }
-    else if(sonar && pulsesRemaining >0 && !isSetup){
+    else if(sonar && pulsesRemaining > 0 && !isSetup){
         sendXhr("POST", "/sonar", {game: game, x: row, y: col}, function(data) {
            game = data;
            console.log("Sonar has been used!");
            redrawGrid();
+           toggleSonar();
+
+           pulsesRemaining--;
+           if(pulsesRemaining === 0) {
+               document.getElementById("use_sonar").classList.add("hidden");
+           }
+           
         });
 
-        pulsesRemaining--;
+        
 
-    }
-    else {
+    } else {
 
         sendXhr("POST", "/attack", {game: game, x: row, y: col}, function(data) {
             game = data;
@@ -158,9 +178,9 @@ function cellClick() {
 function updateShipList() {
     shipType.shift();
     if(shipType.length === 2) {
-        registerCellListener(place(3))
+        registerCellListener(place(3), "player")
     } else if(shipType.length === 1) {
-        registerCellListener(place(2))
+        registerCellListener(place(2), "player")
     }
 }
 
@@ -183,6 +203,29 @@ function sendXhr(method, url, data, handler) {
     req.open(method, url);
     req.setRequestHeader("Content-Type", "application/json");
     req.send(JSON.stringify(data));
+}
+
+function sonarSweep() {
+    return function() {
+        let row = this.parentNode.rowIndex;
+        let col = this.cellIndex;
+        let table = document.getElementById("opponent");
+        for(let i = 0; i < 5; i++) {
+            let width = 1 + 2 * ((i < 2) ? i : 4 - i);
+			for(let j = -Math.floor(width/2); j < Math.floor(width/2)+1; j++) {
+                let cell;
+                let tableRow = table.rows[row - 2 + i];
+                if(tableRow === undefined) {
+                    break;
+                }
+                cell = tableRow.cells[col + j];
+                if(cell === undefined) {
+                    break;
+                }
+                cell.classList.toggle("revealed");
+			}
+		}
+    }
 }
 
 function place(size) {
@@ -212,23 +255,32 @@ function place(size) {
 }
 
 function toggleVertical() {
+    document.getElementById("is_vertical").classList.toggle("button-depressed");
     vertical = !vertical;
 }
 
 function toggleSonar() {
+    document.getElementById("use_sonar").classList.toggle("button-depressed");
     sonar = !sonar;
+
+    if(sonar) {
+        registerCellListener(sonarSweep(), "opponent");
+    } else {
+        registerCellListener((e) => {}, "opponent");
+    }
 }
 
 function initGame() {
     document.getElementById("error-ok").addEventListener("click", closeError);
     document.getElementById("is_vertical").addEventListener("click", toggleVertical);
+    document.getElementById("use_sonar").addEventListener("click", toggleSonar);
 
     makeGrid(document.getElementById("opponent"));
     makeGrid(document.getElementById("player"));
 
 
     shipType = ["BATTLESHIP", "DESTROYER", "MINESWEEPER"];
-    registerCellListener(place(4));
+    registerCellListener(place(4), "player");
 
     sendXhr("GET", "/game", {}, function(data) {
         game = data;
