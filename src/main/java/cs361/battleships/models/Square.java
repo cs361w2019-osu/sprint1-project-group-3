@@ -5,8 +5,10 @@ public class Square {
 
 	private int row;
 	private char column;
+	private boolean hit;
 
 	public Square() {
+		this.hit = false;
 	}
 
 	public Square(int row, char column) {
@@ -28,5 +30,13 @@ public class Square {
 
 	public void setRow(int row) {
 		this.row = row;
+	}
+
+	public boolean getHit() {
+		return this.hit;
+	}
+
+	public void setHit(boolean b) {
+		this.hit = b;
 	}
 }
