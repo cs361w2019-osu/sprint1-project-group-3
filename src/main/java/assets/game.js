@@ -64,15 +64,14 @@ function markHits(board, elementId, surrenderText) {
 
 }
 
-/*
+
 function markSonar(board){
     board.sonarpulses.forEach((pulse) => {
-        //TODO check all around pulse for ships, unless off the board, and unless that spot is already marked
-        for (i=-2; i<2; i++){
-            //check the 2 squares above, below, to the left and right of sonar pulse
-        }
-    }
-}*/
+       pulse.revealedShips.forEach((square) => {
+            document.getElementById(elementId).rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("revealed");
+       });
+    });
+}
 
 
 function redrawGrid() {
@@ -91,7 +90,7 @@ function redrawGrid() {
     markHits(game.opponentsBoard, "opponent", "You won the game");
     markHits(game.playersBoard, "player", "You lost the game");
 
-    //markSonar(game.opponentsBoard);
+    markSonar(game.opponentsBoard);
 }
 
 var oldListener;
@@ -113,6 +112,7 @@ function cellClick() {
     let row = this.parentNode.rowIndex + 1;
     let col = String.fromCharCode(this.cellIndex + 65);
     if (isSetup) {
+
         sendXhr("POST", "/place", {game: game, shipType: shipType[0], x: row, y: col, isVertical: vertical}, function(data) {
             game = data;
             redrawGrid();
@@ -124,19 +124,12 @@ function cellClick() {
                 document.getElementById("is_vertical").style.visibility = "hidden";
             }
         });
-        /*else if(sonar){                                                               //if ship sunk, and they want to use sonar, then
-             sendXhr("POST", "/sonar", {game: game, x: row, y: col}, function(data) {
-                game = data;
-                redrawGrid();
-             })
-        }      */
     } else {
 
-            sendXhr("POST", "/attack", {game: game, x: row, y: col}, function(data) {
-                game = data;
-                redrawGrid();
-            })
-
+        sendXhr("POST", "/attack", {game: game, x: row, y: col}, function(data) {
+            game = data;
+            redrawGrid();
+        });
     }
 }
 

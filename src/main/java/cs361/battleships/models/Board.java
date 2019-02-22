@@ -6,17 +6,18 @@ import java.util.List;
 public class Board {
 
 
-	private List<Ship> ships;               //List of current boards ships
-	private List<Result> attacks;   // List of all previous attack attempts
-	private List<Square> sonarpulses;				//locations of sonar pulses
-
+	private List<Ship> ships;               		//List of current boards ships
+	private List<Result> attacks;   				// List of all previous attack attempts
+//	private List<Square> sonarpulses;				//locations of sonar pulses
+	private List<Sonar>  sonarpulses;
 	/*
 	DO NOT change the signature of this method. It is used by the grading scripts.
 	 */
 	public Board() {
 		this.ships = new ArrayList<Ship>();
 		this.attacks = new ArrayList<Result>();
-		this.sonarpulses = new ArrayList<Square>();
+		//this.sonarpulses = new ArrayList<Square>();
+		this.sonarpulses = new ArrayList<Sonar>();
 	}
 
 	/*
@@ -53,18 +54,50 @@ public class Board {
 	}
 
 	public boolean placeSonar(int x, char y){
-		Square toSonarPulse = new Square(x,y);
+		Square sonarCenter = new Square(x,y);
+		//Sonar toSonarPulse = new Sonar(x, y);
+		Sonar toSonarPulse = new Sonar();
+		toSonarPulse.setCenter(sonarCenter);
+
 
 		//check if it's being placed on the board in a valid manner
-		if(0 > toSonarPulse.getRow() || toSonarPulse.getRow() > 10)
+		if(1 > x || x > 10)
 			return false;
-		if('A' > toSonarPulse.getColumn() || toSonarPulse.getColumn() > 'J')
+		if('A' > y || y > 'J')
 			return false;
 
+
 		//check that it's not placed on top of any other Sonar Pulse
-		for(Square other : this.sonarpulses){
-			if(other.getRow() == x || other.getColumn() == y){
+		for(Sonar other : this.sonarpulses){
+			Square othercenter = other.getCenter();
+			if(othercenter.getRow() == x || othercenter.getColumn() == y){
 				return false;
+			}
+		}
+
+		// upper half of diamond
+		for(int i = 0; i < 3; i++) {
+			int width = 1 + 2*i;
+			for(int j = -(width/2)+1; j < (width/2); j++) {
+				Square target = new Square(x - 3 + i, (char)(y+j));
+				if(target.getRow() < 1 || target.getColumn() > 10 || target.getRow() < 'A' || target.getColumn() > 'J')
+					continue;
+
+
+				boolean found = false;
+				for(Ship s : ships) {
+					for(Square sq : s.getOccupiedSquares()) {
+						if (sq.getRow() == target.getRow() && sq.getColumn() == target.getColumn()) {
+							toSonarPulse.addShipSquare(sq);
+							found = true;
+						}
+					}
+				}
+
+				if(!found) {
+					toSonarPulse.addEmptySquare(target);
+				}
+				// check that the square is still on the board
 			}
 		}
 
@@ -151,11 +184,16 @@ public class Board {
 		this.ships = ships;
 	}
 
-	public List<Square> getSonarpulses(){
+	/*public List<Square> getSonarpulses(){
+		return this.sonarpulses;
+	}*/
+	public List<Sonar> getSonarpulses() {
 		return this.sonarpulses;
 	}
-
-	public void setSonarpulses(List<Square> pulses){
+	//public void setSonarpulses(List<Square> pulses){
+	//	this.sonarpulses = pulses;
+	//}
+	public void setSonarpulses(List<Sonar> pulses){
 		this.sonarpulses = pulses;
 	}
 

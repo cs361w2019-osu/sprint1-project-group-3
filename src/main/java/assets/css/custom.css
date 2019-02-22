@@ -50,6 +50,10 @@ td:hover {
     background-color: black;
 }
 
+.revealed {
+    background-color: gray;
+}
+
 .hit {
     background-color: yellow;
 }
@@ -59,7 +63,7 @@ td:hover {
 }
 
 .miss {
-    background-color: gray;
+    background-color: lightblue;
 }
 
 .hidden {

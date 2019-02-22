@@ -1,5 +1,8 @@
 package cs361.battleships.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Sonar {
 
     private Square center;
@@ -31,6 +34,14 @@ public class Sonar {
 
     public void setRevealedSquares(List<Square> revealedSquares) {
         this.revealedSquares = revealedSquares;
+    }
+
+    public void addShipSquare(Square ship){
+        revealedShips.add(ship);
+    }
+
+    public void addEmptySquare(Square junk){
+        revealedSquares.add(junk);
     }
 
 }
