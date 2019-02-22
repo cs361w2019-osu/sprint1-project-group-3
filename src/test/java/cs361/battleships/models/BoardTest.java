@@ -41,10 +41,6 @@ public class BoardTest {
 
         assertEquals(r.getResult(), AtackStatus.INVALID);
 
-        Result samePlace1 = board.attack(4, 'D');
-        Result samePlace2 = board.attack(4,'D');
-        assertEquals(samePlace2.getResult(), AtackStatus.INVALID);
-
     }
 
     @Test
@@ -53,7 +49,7 @@ public class BoardTest {
         board.placeShip(new Ship ("BATTLESHIP"), 4, 'D', true);
 
         Result r = board.attack(4, 'D'); //HIT
-        assertEquals(r.getResult(), AtackStatus.HIT);
+        assertEquals(AtackStatus.HIT, r.getResult());
     }
 
 
@@ -63,9 +59,9 @@ public class BoardTest {
         board.placeShip(new Ship("MINESWEEPER"), 4, 'A', false);
         board.placeShip(new Ship("DESTROYER"), 5, 'A', false);
         Result r = board.attack(4, 'A');
-        assertEquals(r.getResult(), AtackStatus.HIT);
+        assertEquals(AtackStatus.HIT, r.getResult());
         Result r1 = board.attack(4, 'B');
-        assertEquals(r1.getResult(), AtackStatus.SUNK);
+        assertEquals(AtackStatus.SUNK, r1.getResult());
 
     }
 
@@ -81,7 +77,7 @@ public class BoardTest {
         board.attack(5, 'B');
         Result r = board.attack(5, 'C');
 
-        assertEquals(r.getResult(), AtackStatus.SURRENDER);
+        assertEquals(AtackStatus.SURRENDER, r.getResult());
     }
 
     @Test
@@ -91,6 +87,6 @@ public class BoardTest {
 
         Result r = board.attack(1, 'A');
 
-        assertEquals(r.getResult(), AtackStatus.MISS);
+        assertEquals(AtackStatus.MISS, r.getResult());
     }
 }

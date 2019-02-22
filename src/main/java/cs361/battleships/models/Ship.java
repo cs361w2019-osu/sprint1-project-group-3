@@ -31,6 +31,7 @@ public class Ship {
 	private ShipType shipType;
 	private int health;
 
+
 	public Ship() {
 		this("INVALID");
 	}
@@ -72,9 +73,11 @@ public class Ship {
 		return this.shipType;
 	}
 
-	public int getHealth(){ return this.health; }
+	public int getHealth(){ 
+		return this.health;
+	}
 
-	public void takeDamage(int x, char y){
+	private void takeDamage(int x, char y){
 		this.health-- ;
 	}
 
@@ -92,6 +95,36 @@ public class Ship {
 			}
 			this.occupiedSquares.add(s);
 		}
+	}
+
+	public Result processAttack(int x, char y) {
+		Result res = new Result();
+		res.setLocation(new Square(x, y));
+		res.setShip(this);
+
+		// check if the ship was hit
+		for(Square s : this.occupiedSquares) {
+			if(s.getRow() == x && s.getColumn() == y) {
+				// check for captains quarters
+
+				res.setResult(AtackStatus.HIT);
+
+				// handle capitans quarters
+				if(true) {
+					this.health--;
+					if(this.health <= 0) {
+						res.setResult(AtackStatus.SUNK);
+					}
+				} else {
+					res.setResult(AtackStatus.SUNK);
+				}
+
+				
+				return res;
+			}
+		}
+
+		return null;
 	}
 
 	public List<Square> getOccupiedSquares() {
