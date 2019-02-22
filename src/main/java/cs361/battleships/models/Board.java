@@ -8,6 +8,7 @@ public class Board {
 
 	private List<Ship> ships;               //List of current boards ships
 	private List<Result> attacks;   // List of all previous attack attempts
+	private List<Square> sonarpulses;				//locations of sonar pulses
 
 	/*
 	DO NOT change the signature of this method. It is used by the grading scripts.
@@ -15,6 +16,7 @@ public class Board {
 	public Board() {
 		this.ships = new ArrayList<Ship>();
 		this.attacks = new ArrayList<Result>();
+		this.sonarpulses = new ArrayList<Square>();
 	}
 
 	/*
@@ -46,6 +48,27 @@ public class Board {
 		}
 
 		this.ships.add(toAdd);
+
+		return true;
+	}
+
+	public boolean placeSonar(int x, char y){
+		Square toSonarPulse = new Square(x,y);
+
+		//check if it's being placed on the board in a valid manner
+		if(0 > toSonarPulse.getRow() || toSonarPulse.getRow() > 10)
+			return false;
+		if('A' > toSonarPulse.getColumn() || toSonarPulse.getColumn() > 'J')
+			return false;
+
+		//check that it's not placed on top of any other Sonar Pulse
+		for(Square other : this.sonarpulses){
+			if(other.getRow() == x || other.getColumn() == y){
+				return false;
+			}
+		}
+
+		this.sonarpulses.add(toSonarPulse);
 
 		return true;
 	}

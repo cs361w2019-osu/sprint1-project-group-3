@@ -57,12 +57,19 @@ function markHits(board, elementId, surrenderText) {
 
          if (elementId === "opponent"){                                         
             document.getElementById("results-text").innerHTML = attack.result;
-            document.getElementById("results-text").classList = className;      //edit this later
+            document.getElementById("results-text").classList = className;      //changes background of status board
 
         }
     });
 
 }
+
+/*
+function markSonar(board){
+
+
+}
+*/
 
 function redrawGrid() {
     Array.from(document.getElementById("opponent").childNodes).forEach((row) => row.remove());
@@ -79,6 +86,8 @@ function redrawGrid() {
 
     markHits(game.opponentsBoard, "opponent", "You won the game");
     markHits(game.playersBoard, "player", "You lost the game");
+
+    //markSonar(game.opponentsBoard);
 }
 
 var oldListener;
@@ -111,6 +120,12 @@ function cellClick() {
                 document.getElementById("is_vertical").style.visibility = "hidden";
             }
         });
+        /*else if(sonar){                                                               //if ship sunk, and they want to use sonar, then
+             sendXhr("POST", "/sonar", {game: game, x: row, y: col}, function(data) {
+                game = data;
+                redrawGrid();
+             })
+        }      */
     } else {
 
             sendXhr("POST", "/attack", {game: game, x: row, y: col}, function(data) {
