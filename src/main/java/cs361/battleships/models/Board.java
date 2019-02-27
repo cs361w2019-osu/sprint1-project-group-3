@@ -113,6 +113,61 @@ public class Board {
 		return true;
 	}
 
+	public void moveShips(String direction) {
+		for(int ii = 0; ii < this.getShips().size(); ii ++) {
+
+			int x = this.getShips().get(0).getOccupiedSquares().get(0).getRow();
+			char y = this.getShips().get(0).getOccupiedSquares().get(0).getColumn();
+
+			boolean vert = false;
+			if(x < this.getShips().get(0).getOccupiedSquares().get(1).getRow()) {
+				vert = true;
+			}
+
+			switch (direction) {
+				case "NORTH":
+					if(x != 1) {
+						if(!placeShip(this.getShips().get(ii),x - 1, y, vert)) {
+
+						} else {
+							this.getShips().remove(0);
+						}
+					}
+					break;
+				case "EAST":
+					if(y != 'J') {
+						if(!placeShip(this.getShips().get(ii),x, (char)(y + 1), vert)) {
+
+						} else {
+							this.getShips().remove(0);
+						}
+					}
+					break;
+				case "SOUTH":
+					if(x != 10) {
+						if(!placeShip(this.getShips().get(ii),x + 1, y, vert)) {
+
+						} else {
+							this.getShips().remove(0);
+						}
+					}
+					break;
+				case "WEST":
+					if(y != 'A') {
+						if(!placeShip(this.getShips().get(ii),x, (char)(y - 1), vert)) {
+
+						} else {
+							this.getShips().remove(0);
+						}
+					}
+					break;
+				default: System.out.println("you dun fucked up kid");
+					break;
+			}
+
+		}
+	}
+
 	/*
 	DO NOT change the signature of this method. It is used by the grading scripts.
 	Function handles all attacking , so should
