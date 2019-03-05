@@ -64,7 +64,7 @@ public class Ship {
 	public boolean collidesWith(Ship other) {
 		for(Square s1 : this.occupiedSquares) {
 			for(Square s2 : other.getOccupiedSquares()) {
-				if(s1.getRow() == s2.getRow() && s1.getColumn() == s2.getColumn()) {
+				if(s1.equals(s2)) {
 					return true;
 				}
 			}
