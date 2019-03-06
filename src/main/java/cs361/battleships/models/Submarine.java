@@ -5,6 +5,69 @@ public class Submarine extends Ship {
         super("SUBMARINE");
     }
 
+
+
+
+    public Result processAttack(int x, char y, Weapon weapon) {
+        Result res = new Result();
+        res.setLocation(new Square(x, y));
+        res.setShip(this);
+
+        // check if the ship was hit
+        for(Square s : this.occupiedSquares) {
+            if(s.getRow() == x && s.getColumn() == y) {
+
+                if(weapon != Weapon.LASER && isSubmerged()) {
+                    return null;
+                }
+
+                if(s.getHit()) {
+                    res.setResult(AtackStatus.INVALID);
+                    return res;
+                }
+
+                // if the weapon is a space laser, a hit counts as death
+                if(weapon == Weapon.LASER) {
+                    res.setResult(AtackStatus.SUNK);
+                    this.health = 0;
+                    for(Square sq : occupiedSquares)
+                        sq.setHit(true);
+                    return res;
+                }
+
+
+                res.setResult(AtackStatus.HIT);
+                s.setHit(true);
+
+                Square cq = getCaptainsQuarters();
+                if(s.getRow() == cq.getRow() && s.getColumn() == cq.getColumn()) {
+                    if(!cqHit) {
+                        res.setResult(AtackStatus.MISS);
+                        s.setHit(false);
+                        this.cqHit = true;
+                        return res;
+                    } else {
+                        res.setResult(AtackStatus.SUNK);
+                        this.health = 0;
+                        for(Square sq : occupiedSquares)
+                            sq.setHit(true);
+                        return res;
+                    }
+                }
+
+                if(!s.getHit())
+                    this.health--;
+                if(this.health <= 0) {
+                    res.setResult(AtackStatus.SUNK);
+                }
+
+                return res;
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public void setOccupiedSquaresByOrientation(int row, char col, boolean vertical) {
         this.occupiedSquares.clear();

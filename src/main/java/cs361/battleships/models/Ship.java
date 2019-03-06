@@ -66,7 +66,7 @@ public class Ship {
 		for(Square s1 : this.occupiedSquares) {
 			for(Square s2 : other.getOccupiedSquares()) {
 				// are the squares occupining the same location and at the same depth
-				if(s1.equals(s2) && s2.getSubmerged() == s1.getSubmerged()) {
+				if(s1.equals(s2)) {
 					return true;
 				}
 			}
@@ -115,7 +115,7 @@ public class Ship {
 		}
 	}
 
-	public Result processAttack(int x, char y) {
+	public Result processAttack(int x, char y, Weapon weapon) {
 		Result res = new Result();
 		res.setLocation(new Square(x, y));
 		res.setShip(this);
@@ -123,7 +123,15 @@ public class Ship {
 		// check if the ship was hit
 		for(Square s : this.occupiedSquares) {
 			if(s.getRow() == x && s.getColumn() == y) {
-				
+
+				// if the weapon is a space laser, a hit counts as death
+				if(weapon == Weapon.LASER) {
+					res.setResult(AtackStatus.SUNK);
+					this.health = 0;
+					for(Square sq : occupiedSquares)
+						sq.setHit(true);
+					return res;
+				}
 				
 				if(s.getHit()) {
 					res.setResult(AtackStatus.INVALID);
@@ -178,7 +186,7 @@ public class Ship {
 		boolean result = true;
 		// likely sufficient to just check 1, but be thorough
 		for(Square s : this.occupiedSquares) {
-			result |= s.getSubmerged();
+			result &= s.getSubmerged();
 		}
 		return result;
 	}
