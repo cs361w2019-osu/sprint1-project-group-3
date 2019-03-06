@@ -1,6 +1,8 @@
 package cs361.battleships.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,9 @@ import java.util.Random;
 import static cs361.battleships.models.AtackStatus.*;
 
 public class Game {
+
+
+    Logger logger = LoggerFactory.getLogger(Game.class);
 
     @JsonProperty private Board playersBoard = new Board();
     @JsonProperty private Board opponentsBoard = new Board();
@@ -48,9 +53,11 @@ public class Game {
     public boolean attack(int x, char  y) {
         Result playerAttack = opponentsBoard.attack(x, y);
         if (playerAttack.getResult() == INVALID) {
-            //ToDo Implementation
+            logger.info("here");
             return false;
         }
+
+        logger.info("asdfasdf");
 
         Result opponentAttackResult;
         do {

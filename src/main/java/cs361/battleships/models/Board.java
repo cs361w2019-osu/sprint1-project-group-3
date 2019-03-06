@@ -18,7 +18,6 @@ public class Board {
 	public Board() {
 		this.ships = new ArrayList<Ship>();
 		this.attacks = new ArrayList<Result>();
-		//this.sonarpulses = new ArrayList<Square>();
 		this.sonarpulses = new ArrayList<Sonar>();
 	}
 
@@ -77,7 +76,7 @@ public class Board {
 		//check that it's not placed on top of any other Sonar Pulse
 		for(Sonar other : this.sonarpulses){
 			Square othercenter = other.getCenter();
-			if(othercenter.getRow() == x || othercenter.getColumn() == y){
+			if(othercenter.equals(sonarCenter)){
 				return false;
 			}
 		}
@@ -152,8 +151,6 @@ public class Board {
 
 		this.attacks.add(attackResult);
 		return attackResult;
-
-       
 	}
 
 	public List<Ship> getShips() {

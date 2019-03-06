@@ -21,6 +21,7 @@ public class ShipFactory {
 
 		result.setOccupiedSquaresByOrientation(base.getRow(), base.getColumn(), base.getRow() != ship.getOccupiedSquares().get(1).getRow());
 
+		result.setSubmerged(ship.isSubmerged());
 
 		return result;
 	}
@@ -40,6 +41,8 @@ public class ShipFactory {
                 return new Minesweeper();
             case "DESTROYER":
                 return new Destroyer();
+            case "SUBMARINE":
+                return new Submarine();
             default:
                 return new InvalidShip();
         }
