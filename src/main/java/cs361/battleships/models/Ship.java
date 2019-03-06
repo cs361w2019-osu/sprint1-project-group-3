@@ -170,6 +170,13 @@ public class Ship {
 		return null;
 	}
 
+	public void move(int dx, int dy) {
+		for(Square s : this.occupiedSquares) {
+			s.setRow(s.getRow() + dx);
+			s.setColumn((char)(s.getColumn() + dy));
+		}
+	}
+
 	public Square getCaptainsQuarters() {
 		return this.captainsQuarters;
 	}

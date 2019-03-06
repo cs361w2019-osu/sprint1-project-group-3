@@ -69,6 +69,10 @@ public class Game {
         return true;
     }
 
+    public void moveFleet(int dx, int dy) {
+        playersBoard.moveFleet(dx, dy);
+    }
+
 
 
 

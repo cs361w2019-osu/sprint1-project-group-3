@@ -38,14 +38,8 @@ public class Board {
 		}
 
 		// check that each occupied square is valid
-		for(Square s : toAdd.getOccupiedSquares()) {
-			if(0 > s.getRow() || s.getRow() > 10) {
-				return false;
-			}
-			if('A' > s.getColumn() || s.getColumn() > 'J') {
-				return false;
-			}
-		}
+		if(!containsShip(toAdd))
+			return false;
 
 
 
@@ -161,6 +155,47 @@ public class Board {
 
 		this.attacks.add(attackResult);
 		return attackResult;
+	}
+
+	public void moveFleet(int dx, int dy) {
+		for (Ship s : this.ships) {
+			s.move(dx, dy);
+			if (!containsShip(s)) {
+				s.move(-dx, -dy);
+			}
+
+
+		}
+
+		// check that this didn't cause a ship based collision
+		// check only after having moved all ships.
+		for (Ship s : this.ships) {
+			for (Ship other : this.ships) {
+				// only one of each ship
+				if (!s.getShipType().equals(other.getShipType())) {
+					if (s.isSubmerged() || other.isSubmerged()) {
+						continue;
+					}
+
+					if (s.collidesWith(other)) {
+						s.move(-dx, -dy);
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	private boolean containsShip(Ship ship) {
+		for(Square s : ship.getOccupiedSquares()) {
+			if(0 > s.getRow() || s.getRow() > 10) {
+				return false;
+			}
+			if('A' > s.getColumn() || s.getColumn() > 'J') {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public List<Ship> getShips() {

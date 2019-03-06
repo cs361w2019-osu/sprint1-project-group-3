@@ -149,6 +149,8 @@ function cellClick() {
                 registerCellListener((e) => {}, "player");
                 document.getElementById("is_vertical").style.visibility = "hidden";
                 document.getElementById("is_submerged").style.visibility = "hidden";
+
+                document.getElementById("example_move").classList.toggle('hidden');
             }
         });
 
@@ -329,6 +331,13 @@ function initGame() {
     document.getElementById("use_sonar").addEventListener("click", toggleSonar);
     document.getElementById("is_submerged").addEventListener("click", toggleSubmerge);
 
+    document.getElementById("example_move").addEventListener("click", () => {
+        sendXhr("POST", "/move", {game: game, dx: 1, dy: 0}, function(data) {
+           game = data;
+           console.log("move has been used!");
+           redrawGrid();
+        });
+    });
 
     makeGrid(document.getElementById("opponent"));
     makeGrid(document.getElementById("player"));
