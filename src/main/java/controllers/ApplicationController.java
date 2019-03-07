@@ -32,8 +32,9 @@ public class ApplicationController {
         Game game = g.getGame();
         Ship ship = ShipFactory.Build(g.getShipType());
 
-        if(g.isSubmerged() && ship instanceof Submarine) {
+        if(g.isSubmerged() && ship.getShipType() == Ship.ShipType.SUBMARINE) {
             ship.setSubmerged(true);
+            System.out.println(ship.isSubmerged());
         }
 
         boolean result = game.placeShip(ship, g.getActionRow(), g.getActionColumn(), g.isVertical());
@@ -57,7 +58,6 @@ public class ApplicationController {
     public Result attack(Context context, AttackGameAction g) {
         Game game = g.getGame();
         boolean result = game.attack(g.getActionRow(), g.getActionColumn());
-        System.out.println("asdfasdfasdf");
         if (result) {
             return Results.json().render(game);
         } else {

@@ -19,9 +19,10 @@ public class ShipFactory {
 
 		Square base = ship.getOccupiedSquares().get(0);
 
+        result.setSubmerged(ship.isSubmerged());
 		result.setOccupiedSquaresByOrientation(base.getRow(), base.getColumn(), base.getRow() != ship.getOccupiedSquares().get(1).getRow());
 
-		result.setSubmerged(ship.isSubmerged());
+
 
 		return result;
 	}

@@ -34,6 +34,19 @@ public class Submarine extends Ship {
                     occupiedSquares.get(occupiedSquares.size() - 2).getRow(),
                     occupiedSquares.get(occupiedSquares.size() - 2).getColumn());
         }
+
+        for(Square sq : this.occupiedSquares)
+            sq.setSubmerged(this.submerged);
+    }
+
+
+    @Override
+    public Result processAttack(int x, char y) {
+        if(isSubmerged()) {
+            return null;
+        } else {
+            return super.processAttack(x, y);
+        }
     }
 
 

@@ -33,6 +33,7 @@ public class Ship {
 	protected int health;
 	protected boolean cqHit;
 	protected Square captainsQuarters;
+	protected boolean submerged;
 
 	public Ship() {
 		this("INVALID");
@@ -40,6 +41,7 @@ public class Ship {
 	
 	public Ship(String kind) {
 		this.cqHit = false;
+		this.submerged = false;
 		this.occupiedSquares = new ArrayList<Square>();
 		try {
 			this.shipType = ShipType.valueOf(kind);
@@ -60,6 +62,7 @@ public class Ship {
 			this.occupiedSquares.add(s);
 		}
 		this.health = other.health;
+		this.submerged = other.submerged;
 	}
 
 	public boolean collidesWith(Ship other) {
@@ -113,6 +116,8 @@ public class Ship {
 					occupiedSquares.get(occupiedSquares.size() - 2).getRow(),
 					occupiedSquares.get(occupiedSquares.size() - 2).getColumn());
 		}
+
+
 	}
 
 	public Result processAttack(int x, char y) {
@@ -175,16 +180,10 @@ public class Ship {
 	}
 
 	public boolean isSubmerged() {
-		boolean result = true;
-		// likely sufficient to just check 1, but be thorough
-		for(Square s : this.occupiedSquares) {
-			result &= s.getSubmerged();
-		}
-		return result;
+		return this.submerged;
 	}
 
 	public void setSubmerged(boolean b) {
-		for(Square s : this.occupiedSquares)
-			s.setSubmerged(b);
+		this.submerged = b;
 	}
 }
