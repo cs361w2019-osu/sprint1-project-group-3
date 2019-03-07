@@ -18,7 +18,6 @@ public class Board {
 	public Board() {
 		this.ships = new ArrayList<Ship>();
 		this.attacks = new ArrayList<Result>();
-		//this.sonarpulses = new ArrayList<Square>();
 		this.sonarpulses = new ArrayList<Sonar>();
 	}
 
@@ -27,7 +26,8 @@ public class Board {
 	 */
 	public boolean placeShip(Ship ship, int x, char y, boolean isVertical) {
 		Ship toAdd = ShipFactory.Build(ship);
-		toAdd.setOccupiedSquaresByOrientation(x, y, isVertical);	
+		toAdd.setSubmerged(ship.isSubmerged());
+		toAdd.setOccupiedSquaresByOrientation(x, y, isVertical);
 
 		if(toAdd.getShipType() == Ship.ShipType.INVALID) {
 			return false;
@@ -35,7 +35,7 @@ public class Board {
 
 		// check that each occupied square is valid
 		for(Square s : toAdd.getOccupiedSquares()) {
-			if(0 > s.getRow() || s.getRow() > 10) {
+			if(0 >= s.getRow() || s.getRow() > 10) {
 				return false;
 			}
 			if('A' > s.getColumn() || s.getColumn() > 'J') {
@@ -77,7 +77,7 @@ public class Board {
 		//check that it's not placed on top of any other Sonar Pulse
 		for(Sonar other : this.sonarpulses){
 			Square othercenter = other.getCenter();
-			if(othercenter.getRow() == x || othercenter.getColumn() == y){
+			if(othercenter.equals(sonarCenter)){
 				return false;
 			}
 		}
@@ -152,8 +152,6 @@ public class Board {
 
 		this.attacks.add(attackResult);
 		return attackResult;
-
-       
 	}
 
 	public List<Ship> getShips() {
