@@ -181,15 +181,10 @@ public class Board {
 
 	}
 
-	/*public List<Square> getSonarpulses(){
-		return this.sonarpulses;
-	}*/
 	public List<Sonar> getSonarpulses() {
 		return this.sonarpulses;
 	}
-	//public void setSonarpulses(List<Square> pulses){
-	//	this.sonarpulses = pulses;
-	//}
+
 	public void setSonarpulses(List<Sonar> pulses){
 		this.sonarpulses = pulses;
 	}
