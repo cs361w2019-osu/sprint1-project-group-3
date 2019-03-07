@@ -12,6 +12,8 @@ public class Board {
 	private List<Result> attacks;   				
 	private List<Sonar>  sonarpulses;
 
+	@JsonProperty
+	private Weapon currentWeapon;
 	/*
 	DO NOT change the signature of this method. It is used by the grading scripts.
 	 */
