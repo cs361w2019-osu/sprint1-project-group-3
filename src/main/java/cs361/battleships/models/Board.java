@@ -139,7 +139,7 @@ public class Board {
 		}
 
 		for(Ship s : this.ships) {
-			Result res = s.processAttack(x, y);
+			Result res = s.processAttack(x, y, this.currentWeapon);
 			if(res != null) {
 				attackResult = res;
 				break;

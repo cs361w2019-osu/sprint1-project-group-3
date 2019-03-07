@@ -8,7 +8,7 @@ public class Minesweeper extends Ship {
     }
     
     @Override
-    public Result processAttack(int x, char y) {
+    public Result processAttack(int x, char y, Weapon ws) {
         Result res = new Result();
         res.setLocation(new Square(x, y));
         res.setShip(this);

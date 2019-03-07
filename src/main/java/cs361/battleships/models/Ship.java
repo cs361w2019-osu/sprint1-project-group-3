@@ -120,7 +120,7 @@ public class Ship {
 
 	}
 
-	public Result processAttack(int x, char y) {
+	public Result processAttack(int x, char y, Weapon w) {
 		Result res = new Result();
 		res.setLocation(new Square(x, y));
 		res.setShip(this);
