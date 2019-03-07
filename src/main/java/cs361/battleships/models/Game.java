@@ -53,11 +53,8 @@ public class Game {
     public boolean attack(int x, char  y) {
         Result playerAttack = opponentsBoard.attack(x, y);
         if (playerAttack.getResult() == INVALID) {
-            logger.info("here");
             return false;
         }
-
-        logger.info("asdfasdf");
 
         Result opponentAttackResult;
         do {

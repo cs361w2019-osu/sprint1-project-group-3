@@ -65,7 +65,7 @@ public class Ship {
 	public boolean collidesWith(Ship other) {
 		for(Square s1 : this.occupiedSquares) {
 			for(Square s2 : other.getOccupiedSquares()) {
-				// are the squares occupining the same location and at the same depth
+				// are the squares occupying the same location and at the same depth
 				if(s1.equals(s2) && s2.getSubmerged() == s1.getSubmerged()) {
 					return true;
 				}
@@ -178,7 +178,7 @@ public class Ship {
 		boolean result = true;
 		// likely sufficient to just check 1, but be thorough
 		for(Square s : this.occupiedSquares) {
-			result |= s.getSubmerged();
+			result &= s.getSubmerged();
 		}
 		return result;
 	}
