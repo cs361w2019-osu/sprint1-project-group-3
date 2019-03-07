@@ -1,6 +1,6 @@
 package cs361.battleships.models;
 
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import cs361.battleships.ShipFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,8 @@ public class Board {
 		this.attacks = new ArrayList<Result>();
 		//this.sonarpulses = new ArrayList<Square>();
 		this.sonarpulses = new ArrayList<Sonar>();
+
+		this.currentWeapon = Weapon.CANNON;
 	}
 
 	/*
@@ -144,12 +146,18 @@ public class Board {
 			}
 		}
 
+
+
 		int totalHealth = 0;
 		for(Ship s : ships){
 			totalHealth+= s.getHealth();
 		}
 		if(totalHealth<=0){
 			attackResult.setResult(AtackStatus.SURRENDER);
+		}
+
+		if(attackResult.getResult() == AtackStatus.SUNK){
+			this.currentWeapon = Weapon.LASER;
 		}
 
 		this.attacks.add(attackResult);
