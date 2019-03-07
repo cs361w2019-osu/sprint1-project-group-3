@@ -12,6 +12,7 @@ public class Ship {
 		MINESWEEPER(2),
 		BATTLESHIP(4),
 		DESTROYER(3),
+		SUBMARINE(5),
 		INVALID(0);
 
 		private final int value;
@@ -32,6 +33,7 @@ public class Ship {
 	protected int health;
 	protected boolean cqHit;
 	protected Square captainsQuarters;
+	protected boolean submerged;
 
 	public Ship() {
 		this("INVALID");
@@ -39,6 +41,7 @@ public class Ship {
 	
 	public Ship(String kind) {
 		this.cqHit = false;
+		this.submerged = false;
 		this.occupiedSquares = new ArrayList<Square>();
 		try {
 			this.shipType = ShipType.valueOf(kind);
@@ -59,12 +62,14 @@ public class Ship {
 			this.occupiedSquares.add(s);
 		}
 		this.health = other.health;
+		this.submerged = other.submerged;
 	}
 
 	public boolean collidesWith(Ship other) {
 		for(Square s1 : this.occupiedSquares) {
 			for(Square s2 : other.getOccupiedSquares()) {
-				if(s1.getRow() == s2.getRow() && s1.getColumn() == s2.getColumn()) {
+				// are the squares occupying the same location and at the same depth
+				if(s1.equals(s2) && s2.getSubmerged() == s1.getSubmerged()) {
 					return true;
 				}
 			}
@@ -92,12 +97,12 @@ public class Ship {
 		this.health = health;
 	}
 
-	public void setOccupiedSquaresByOrientation(int row, char col, boolean verticle) {
+	public void setOccupiedSquaresByOrientation(int row, char col, boolean vertical) {
 		this.occupiedSquares.clear();
 
 		for(int i = 0; i < this.shipType.getValue(); i++) {
 			Square s;
-			if(verticle) {
+			if(vertical) {
 				// rows increase going down the page
 				s = new Square(row + i, col);
 			} else {
@@ -106,10 +111,13 @@ public class Ship {
 			}
 			this.occupiedSquares.add(s);
 		}
-		if(occupiedSquares.size() > 0)
+		if(occupiedSquares.size() > 0) {
 			this.captainsQuarters = new Square(
-				occupiedSquares.get(occupiedSquares.size() - 2).getRow(), 
-				occupiedSquares.get(occupiedSquares.size() - 2).getColumn());
+					occupiedSquares.get(occupiedSquares.size() - 2).getRow(),
+					occupiedSquares.get(occupiedSquares.size() - 2).getColumn());
+		}
+
+
 	}
 
 	public Result processAttack(int x, char y) {
@@ -169,5 +177,13 @@ public class Ship {
 
 	public List<Square> getOccupiedSquares() {
 		return this.occupiedSquares;
+	}
+
+	public boolean isSubmerged() {
+		return this.submerged;
+	}
+
+	public void setSubmerged(boolean b) {
+		this.submerged = b;
 	}
 }
