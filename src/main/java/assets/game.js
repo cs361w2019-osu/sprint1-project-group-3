@@ -7,6 +7,9 @@ var MAX_SHIPS = 4;
 var game;
 var shipType = [];
 
+var sunkShips = 0;
+var movesRemaining = 2;
+
 var vertical;
 var submerged;
 
@@ -42,10 +45,15 @@ function markHits(board, elementId, surrenderText) {
         } else if (attack.result === "HIT"){
                 className = "hit";
         } else if (attack.result === "SUNK") {
+            sunkShips ++;
 
             // reveal the sonar button
             if(pulsesRemaining === 2) {
                 document.getElementById("use_sonar").classList.remove("hidden");
+            }
+
+            if(sunkShips === 2) {
+                document.getElementById("move-toggle").classList.toggle('hidden');
             }
 
             document.getElementById(elementId + "-" + attack.ship.shipType.toLowerCase()).classList.add("crossed-out");                                  //if sunken, cross out ship name
@@ -149,8 +157,6 @@ function cellClick() {
                 registerCellListener((e) => {}, "player");
                 document.getElementById("is_vertical").style.visibility = "hidden";
                 document.getElementById("is_submerged").style.visibility = "hidden";
-
-                document.getElementById("example_move").classList.toggle('hidden');
             }
         });
 
@@ -321,6 +327,23 @@ function toggleSonar() {
     }
 }
 
+function toggleMove() {
+    if(movesRemaining != 0) {
+        document.getElementById("move-toggle").classList.toggle('hidden');
+        document.getElementById("move-north").classList.toggle('hidden');
+        document.getElementById("move-south").classList.toggle('hidden');
+        document.getElementById("move-west").classList.toggle('hidden');
+        document.getElementById("move-east").classList.toggle('hidden');
+    }
+    if(movesRemaining === 0){
+        document.getElementById("move-toggle").classList.add('hidden');
+        document.getElementById("move-north").classList.add('hidden');
+        document.getElementById("move-south").classList.add('hidden');
+        document.getElementById("move-west").classList.add('hidden');
+        document.getElementById("move-east").classList.add('hidden');
+    }
+}
+
 function initGame() {
 
     vertical = false;
@@ -330,12 +353,45 @@ function initGame() {
     document.getElementById("is_vertical").addEventListener("click", toggleVertical);
     document.getElementById("use_sonar").addEventListener("click", toggleSonar);
     document.getElementById("is_submerged").addEventListener("click", toggleSubmerge);
+    document.getElementById("move-toggle").addEventListener("click", toggleMove)
 
-    document.getElementById("example_move").addEventListener("click", () => {
+    document.getElementById("move-north").addEventListener("click", () => {
+        sendXhr("POST", "/move", {game: game, dx: -1, dy: 0}, function(data) {
+           game = data;
+           console.log("move has been used!");
+           redrawGrid();
+           movesRemaining --;
+           toggleMove();
+        });
+    });
+
+    document.getElementById("move-south").addEventListener("click", () => {
         sendXhr("POST", "/move", {game: game, dx: 1, dy: 0}, function(data) {
            game = data;
            console.log("move has been used!");
            redrawGrid();
+           movesRemaining --;
+           toggleMove();
+        });
+    });
+
+    document.getElementById("move-west").addEventListener("click", () => {
+        sendXhr("POST", "/move", {game: game, dx: 0, dy: -1}, function(data) {
+            game = data;
+            console.log("move has been used!");
+            redrawGrid();
+            movesRemaining --;
+            toggleMove();
+        });
+    });
+
+    document.getElementById("move-east").addEventListener("click", () => {
+        sendXhr("POST", "/move", {game: game, dx: 0, dy: 1}, function(data) {
+           game = data;
+           console.log("move has been used!");
+           redrawGrid();
+           movesRemaining --;
+           toggleMove();
         });
     });
 

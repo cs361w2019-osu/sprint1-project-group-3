@@ -158,37 +158,53 @@ public class Board {
 	}
 
 	public void moveFleet(int dx, int dy) {
+
+		//assume every ship is capable of moving at start
+		for(Ship s : this.ships) {
+			s.setCanMove(true);
+		}
+
+		//check if ship is moving out of bounds
 		for (Ship s : this.ships) {
 			s.move(dx, dy);
 			if (!containsShip(s)) {
-				s.move(-dx, -dy);
+				s.setCanMove(false);
 			}
-
-
+			s.move(-dx, -dy);
 		}
 
-		// check that this didn't cause a ship based collision
-		// check only after having moved all ships.
+		//check if ship will collide with any ship that cannot move
 		for (Ship s : this.ships) {
-			for (Ship other : this.ships) {
-				// only one of each ship
-				if (!s.getShipType().equals(other.getShipType())) {
-					if (s.isSubmerged() || other.isSubmerged()) {
-						continue;
-					}
+			if(s.getCanMove()) {
+				s.move(dx, dy);
+				for (Ship other : this.ships) {
+					// only one of each ship
+					if (!s.getShipType().equals(other.getShipType())) {
+						if (s.isSubmerged() || other.isSubmerged()) {
+							continue;
+						}
 
-					if (s.collidesWith(other)) {
-						s.move(-dx, -dy);
-						break;
+						if (s.collidesWith(other) && !other.getCanMove()) {
+							s.setCanMove(false);
+							break;
+						}
 					}
 				}
+				s.move(-dx, -dy);
+			}
+		}
+
+		//move all ships that can move
+		for(Ship s : this.ships) {
+			if(s.getCanMove()) {
+				s.move(dx,dy);
 			}
 		}
 	}
 
 	private boolean containsShip(Ship ship) {
 		for(Square s : ship.getOccupiedSquares()) {
-			if(0 > s.getRow() || s.getRow() > 10) {
+			if(1 > s.getRow() || s.getRow() > 10) {
 				return false;
 			}
 			if('A' > s.getColumn() || s.getColumn() > 'J') {

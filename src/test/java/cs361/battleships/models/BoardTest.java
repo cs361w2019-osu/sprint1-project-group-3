@@ -105,4 +105,16 @@ public class BoardTest {
 
         assertEquals(AtackStatus.MISS, r.getResult());
     }
+
+    @Test
+    public void testInvalidMove() {
+        Board board = new Board();
+        board.placeShip(ShipFactory.Build("MINESWEEPER"), 1, 'A', false);
+        board.placeShip(ShipFactory.Build("DESTROYER"), 2, 'A', false);
+
+        //move north
+        board.moveFleet(-1, 0);
+
+
+    }
 }
