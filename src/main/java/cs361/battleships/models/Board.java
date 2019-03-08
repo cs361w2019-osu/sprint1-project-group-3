@@ -226,6 +226,60 @@ public class Board {
 
 	}
 
+	public void moveFleet(int dx, int dy) {
+
+		//assume every ship is capable of moving at start
+		for(Ship s : this.ships) {
+			s.setCanMove(true);
+		}
+
+		//check if ship is moving out of bounds
+		for (Ship s : this.ships) {
+			s.move(dx, dy);
+			if (!containsShip(s)) {
+				s.setCanMove(false);
+			}
+			s.move(-dx, -dy);
+		}
+
+		//check if ship will collide with any ship that cannot move
+		for (Ship s : this.ships) {
+			if(s.getCanMove()) {
+				s.move(dx, dy);
+				for (Ship other : this.ships) {
+					// only one of each ship
+					if (!s.getShipType().equals(other.getShipType())) {
+						if (s.collidesWith(other) && !other.getCanMove()) {
+							s.setCanMove(false);
+							break;
+						}
+					}
+				}
+				s.move(-dx, -dy);
+			}
+		}
+
+		//move all ships that can move
+		for(Ship s : this.ships) {
+			if(s.getCanMove()) {
+				s.move(dx,dy);
+			}
+		}
+	}
+
+	//checks if ship is in-bounds
+	private boolean containsShip(Ship ship) {
+		for(Square s : ship.getOccupiedSquares()) {
+			if(1 > s.getRow() || s.getRow() > 10) {
+				return false;
+			}
+			if('A' > s.getColumn() || s.getColumn() > 'J') {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	/*public List<Square> getSonarpulses(){
 		return this.sonarpulses;
 	}*/
