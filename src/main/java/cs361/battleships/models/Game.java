@@ -66,8 +66,9 @@ public class Game {
         return true;
     }
 
-
-
+    public void moveFleet(int dx, int dy) {
+        playersBoard.moveFleet(dx, dy);
+    }
 
     private char randCol() {
         return (char)(65 + random.nextInt(75));

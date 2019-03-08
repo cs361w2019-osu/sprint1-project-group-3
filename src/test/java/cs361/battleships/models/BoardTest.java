@@ -105,4 +105,32 @@ public class BoardTest {
 
         assertEquals(AtackStatus.MISS, r.getResult());
     }
+
+    @Test
+    public void testMove() {
+        Board board = new Board();
+        Ship a = ShipFactory.Build("MINESWEEPER");
+        Ship b = ShipFactory.Build("DESTROYER");
+        board.placeShip(a, 4, 'A', false);
+        board.placeShip(b, 5, 'A', false);
+
+        board.moveFleet(-1,0);
+
+        assertEquals(board.getShips().get(0).getOccupiedSquares().get(0).getRow(), 3);
+        assertEquals(board.getShips().get(1).getOccupiedSquares().get(0).getRow(), 4);
+    }
+
+    @Test
+    public void testInvalidMove() {
+        Board board = new Board();
+        Ship a = ShipFactory.Build("MINESWEEPER");
+        Ship b = ShipFactory.Build("DESTROYER");
+        board.placeShip(a, 1, 'A', false);
+        board.placeShip(b, 2, 'A', false);
+
+        board.moveFleet(-1,0);
+
+        assertEquals(board.getShips().get(0).getOccupiedSquares().get(0).getRow(), 1);
+        assertEquals(board.getShips().get(1).getOccupiedSquares().get(0).getRow(), 2);
+    }
 }

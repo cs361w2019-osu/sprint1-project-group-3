@@ -33,6 +33,7 @@ public class Ship {
 	protected int health;
 	protected boolean cqHit;
 	protected Square captainsQuarters;
+	protected boolean canMove;
 	protected boolean submerged;
 
 	public Ship() {
@@ -41,6 +42,7 @@ public class Ship {
 	
 	public Ship(String kind) {
 		this.cqHit = false;
+		this.canMove = true;
 		this.submerged = false;
 		this.occupiedSquares = new ArrayList<Square>();
 		try {
@@ -54,6 +56,7 @@ public class Ship {
 
 	public Ship(Ship other) {
 		this.cqHit = other.getcqHit();
+		this.canMove = other.getCanMove();
 		this.shipType = other.getShipType();
 		this.occupiedSquares = new ArrayList<Square>();
 		for(int i = 0; i < other.getOccupiedSquares().size(); i++) {
@@ -63,6 +66,13 @@ public class Ship {
 		}
 		this.health = other.health;
 		this.submerged = other.submerged;
+	}
+
+	public void move(int dx, int dy) {
+		for(Square s : this.occupiedSquares) {
+			s.setRow(s.getRow() + dx);
+			s.setColumn((char)(s.getColumn() + dy));
+		}
 	}
 
 	public boolean collidesWith(Ship other) {
@@ -177,6 +187,14 @@ public class Ship {
 
 	public List<Square> getOccupiedSquares() {
 		return this.occupiedSquares;
+	}
+
+	public boolean getCanMove() {
+		return this.canMove;
+	}
+
+	public void setCanMove(boolean b) {
+		this.canMove = b;
 	}
 
 	public boolean isSubmerged() {

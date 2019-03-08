@@ -64,4 +64,10 @@ public class ApplicationController {
             return Results.badRequest();
         }
     }
+
+    public Result move(Context context, FleetMoveAction g) {
+        Game game = g.getGame();
+        game.moveFleet(g.getDX(), g.getDY());
+        return Results.json().render(game);
+    }
 }

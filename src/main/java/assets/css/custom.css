@@ -240,3 +240,8 @@ td:hover {
     color: lightblue !important;
     border: 2px solid lightblue !important;
 }
+
+.move-buttons {
+    text-align: center;
+    width: 180%;
+}

@@ -117,6 +117,61 @@ public class Board {
 		return true;
 	}
 
+	public void moveShips(String direction) {
+		for(int ii = 0; ii < this.getShips().size(); ii ++) {
+
+			int x = this.getShips().get(0).getOccupiedSquares().get(0).getRow();
+			char y = this.getShips().get(0).getOccupiedSquares().get(0).getColumn();
+
+			boolean vert = false;
+			if(x < this.getShips().get(0).getOccupiedSquares().get(1).getRow()) {
+				vert = true;
+			}
+
+			switch (direction) {
+				case "NORTH":
+					if(x != 1) {
+						if(!placeShip(this.getShips().get(ii),x - 1, y, vert)) {
+
+						} else {
+							this.getShips().remove(0);
+						}
+					}
+					break;
+				case "EAST":
+					if(y != 'J') {
+						if(!placeShip(this.getShips().get(ii),x, (char)(y + 1), vert)) {
+
+						} else {
+							this.getShips().remove(0);
+						}
+					}
+					break;
+				case "SOUTH":
+					if(x != 10) {
+						if(!placeShip(this.getShips().get(ii),x + 1, y, vert)) {
+
+						} else {
+							this.getShips().remove(0);
+						}
+					}
+					break;
+				case "WEST":
+					if(y != 'A') {
+						if(!placeShip(this.getShips().get(ii),x, (char)(y - 1), vert)) {
+
+						} else {
+							this.getShips().remove(0);
+						}
+					}
+					break;
+				default: System.out.println("you dun fucked up kid");
+					break;
+			}
+
+		}
+	}
+
 	/*
 	DO NOT change the signature of this method. It is used by the grading scripts.
 	Function handles all attacking , so should
@@ -179,6 +234,63 @@ public class Board {
 
 	}
 
+	public void moveFleet(int dx, int dy) {
+
+		//assume every ship is capable of moving at start
+		for(Ship s : this.ships) {
+			s.setCanMove(true);
+		}
+
+		//check if ship is moving out of bounds
+		for (Ship s : this.ships) {
+			s.move(dx, dy);
+			if (!containsShip(s)) {
+				s.setCanMove(false);
+			}
+			s.move(-dx, -dy);
+		}
+
+		//check if ship will collide with any ship that cannot move
+		for (Ship s : this.ships) {
+			if(s.getCanMove()) {
+				s.move(dx, dy);
+				for (Ship other : this.ships) {
+					// only one of each ship
+					if (!s.getShipType().equals(other.getShipType())) {
+						if (s.collidesWith(other) && !other.getCanMove()) {
+							s.setCanMove(false);
+							break;
+						}
+					}
+				}
+				s.move(-dx, -dy);
+			}
+		}
+
+		//move all ships that can move
+		for(Ship s : this.ships) {
+			if(s.getCanMove()) {
+				s.move(dx,dy);
+			}
+		}
+	}
+
+	//checks if ship is in-bounds
+	private boolean containsShip(Ship ship) {
+		for(Square s : ship.getOccupiedSquares()) {
+			if(1 > s.getRow() || s.getRow() > 10) {
+				return false;
+			}
+			if('A' > s.getColumn() || s.getColumn() > 'J') {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/*public List<Square> getSonarpulses(){
+		return this.sonarpulses;
+	}*/
 	public List<Sonar> getSonarpulses() {
 		return this.sonarpulses;
 	}

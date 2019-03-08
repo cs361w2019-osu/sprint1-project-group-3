@@ -11,7 +11,8 @@ var shipType = [];
 var vertical;
 var submerged;
 
-
+var sunkShips = 0;
+var movesRemaining = 2;
 
 
 function showError(errorText) {
@@ -44,6 +45,7 @@ function markHits(board, elementId, surrenderText) {
                 className = "hit";
                 document.getElementById(elementId).rows[attack.location.row-1].cells[attack.location.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.remove("miss");
         } else if (attack.result === "SUNK") {
+            sunkShips ++;
 
             // reveal the sonar button
             if(pulsesRemaining === 2) {
@@ -54,13 +56,19 @@ function markHits(board, elementId, surrenderText) {
                 displayedLaser=true;
             }
 
-            document.getElementById(elementId + "-" + attack.ship.shipType.toLowerCase()).classList.add("crossed-out");                                 //if sunken, cross out ship name
-            document.getElementById(elementId + "-" + attack.ship.shipType.toLowerCase()).classList.add("secondary-color");                             //also changes color of said ship name
+            if(sunkShips === 2) {
+                document.getElementById("move-toggle").classList.toggle('hidden');
+            }
+
+            document.getElementById(elementId + "-" + attack.ship.shipType.toLowerCase()).classList.add("crossed-out");                                  //if sunken, cross out ship name
+            document.getElementById(elementId + "-" + attack.ship.shipType.toLowerCase()).classList.add("secondary-color");                              //also changes color of said ship name
+
             className = "sink";
             attack.ship.occupiedSquares.forEach((square) => {                                                                                           //if ship sunk, grab all occupied squares of ship
                 document.getElementById(elementId).rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.remove("miss");  //set all ship elements to sink class name
                 document.getElementById(elementId).rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("sink"); 
             });
+
         } else if (attack.result === "SURRENDER") {      
             className = "sink";
             attack.ship.occupiedSquares.forEach((square) => {                                                                                           //if ship sunk, grab all occupied squares of ship
@@ -323,15 +331,72 @@ function toggleSonar() {
     }
 }
 
+function toggleMove() {
+    if(movesRemaining != 0) {
+        document.getElementById("move-toggle").classList.toggle('hidden');
+        document.getElementById("move-north").classList.toggle('hidden');
+        document.getElementById("move-south").classList.toggle('hidden');
+        document.getElementById("move-west").classList.toggle('hidden');
+        document.getElementById("move-east").classList.toggle('hidden');
+    }
+    if(movesRemaining === 0){
+        document.getElementById("move-toggle").classList.add('hidden');
+        document.getElementById("move-north").classList.add('hidden');
+        document.getElementById("move-south").classList.add('hidden');
+        document.getElementById("move-west").classList.add('hidden');
+        document.getElementById("move-east").classList.add('hidden');
+    }
+}
+
 function initGame() {
     document.getElementById("error-ok").addEventListener("click", closeError);
     document.getElementById("is_vertical").addEventListener("click", toggleVertical);
     document.getElementById("use_sonar").addEventListener("click", toggleSonar);
+    document.getElementById("move-toggle").addEventListener("click", toggleMove);
+
+    document.getElementById("move-north").addEventListener("click", () => {
+            sendXhr("POST", "/move", {game: game, dx: -1, dy: 0}, function(data) {
+               game = data;
+               console.log("move has been used!");
+               redrawGrid();
+               movesRemaining --;
+               toggleMove();
+            });
+        });
+
+    document.getElementById("move-south").addEventListener("click", () => {
+        sendXhr("POST", "/move", {game: game, dx: 1, dy: 0}, function(data) {
+           game = data;
+           console.log("move has been used!");
+           redrawGrid();
+           movesRemaining --;
+           toggleMove();
+        });
+    });
+
+    document.getElementById("move-west").addEventListener("click", () => {
+        sendXhr("POST", "/move", {game: game, dx: 0, dy: -1}, function(data) {
+            game = data;
+            console.log("move has been used!");
+            redrawGrid();
+            movesRemaining --;
+            toggleMove();
+        });
+    });
+
+    document.getElementById("move-east").addEventListener("click", () => {
+        sendXhr("POST", "/move", {game: game, dx: 0, dy: 1}, function(data) {
+           game = data;
+           console.log("move has been used!");
+           redrawGrid();
+           movesRemaining --;
+           toggleMove();
+        });
+});
     document.getElementById("is_submerged").addEventListener("click", toggleSubmerge);
 
     vertical = false;
     submerged = false;
-
 
     makeGrid(document.getElementById("opponent"));
     makeGrid(document.getElementById("player"));
