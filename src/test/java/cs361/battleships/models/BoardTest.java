@@ -17,12 +17,12 @@ public class BoardTest {
         assertFalse(board.placeShip(ShipFactory.Build("MINESWEEPER"), 11, 'C', true));
 
         Board board2 = new Board();
-        board2.placeShip(ShipFactory.Build("MINESWEEPER"), 0, 'D', true);
+        board2.placeShip(ShipFactory.Build("MINESWEEPER"), 1, 'D', true);
         assertFalse(board2.placeShip(ShipFactory.Build("DESTROYER"), 1, 'B', false));
 
         Board board3 = new Board();
-        board3.placeShip(ShipFactory.Build("BATTLESHIP"), 0, 'A', true);
-        assertFalse(board3.placeShip(ShipFactory.Build("BATTLESHIP"), 0, 'B', true));
+        board3.placeShip(ShipFactory.Build("BATTLESHIP"), 1, 'A', true);
+        assertFalse(board3.placeShip(ShipFactory.Build("BATTLESHIP"), 1, 'B', true));
 
         Board board4 = new Board();
         assertTrue(board4.placeShip(ShipFactory.Build("MINESWEEPER"), 9, 'A', false));

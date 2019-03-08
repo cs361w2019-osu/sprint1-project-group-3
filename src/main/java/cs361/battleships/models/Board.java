@@ -1,6 +1,6 @@
 package cs361.battleships.models;
 
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import cs361.battleships.ShipFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +12,17 @@ public class Board {
 	private List<Result> attacks;   				
 	private List<Sonar>  sonarpulses;
 
+	@JsonProperty
+	private Weapon currentWeapon;
 	/*
 	DO NOT change the signature of this method. It is used by the grading scripts.
 	 */
 	public Board() {
 		this.ships = new ArrayList<Ship>();
 		this.attacks = new ArrayList<Result>();
-		//this.sonarpulses = new ArrayList<Square>();
 		this.sonarpulses = new ArrayList<Sonar>();
+
+		this.currentWeapon = Weapon.CANNON;
 	}
 
 	/*
@@ -27,7 +30,8 @@ public class Board {
 	 */
 	public boolean placeShip(Ship ship, int x, char y, boolean isVertical) {
 		Ship toAdd = ShipFactory.Build(ship);
-		toAdd.setOccupiedSquaresByOrientation(x, y, isVertical);	
+		toAdd.setSubmerged(ship.isSubmerged());
+		toAdd.setOccupiedSquaresByOrientation(x, y, isVertical);
 
 		if(toAdd.getShipType() == Ship.ShipType.INVALID) {
 			return false;
@@ -35,7 +39,7 @@ public class Board {
 
 		// check that each occupied square is valid
 		for(Square s : toAdd.getOccupiedSquares()) {
-			if(0 > s.getRow() || s.getRow() > 10) {
+			if(0 >= s.getRow() || s.getRow() > 10) {
 				return false;
 			}
 			if('A' > s.getColumn() || s.getColumn() > 'J') {
@@ -77,7 +81,7 @@ public class Board {
 		//check that it's not placed on top of any other Sonar Pulse
 		for(Sonar other : this.sonarpulses){
 			Square othercenter = other.getCenter();
-			if(othercenter.getRow() == x || othercenter.getColumn() == y){
+			if(othercenter.equals(sonarCenter)){
 				return false;
 			}
 		}
@@ -190,12 +194,14 @@ public class Board {
 		}
 
 		for(Ship s : this.ships) {
-			Result res = s.processAttack(x, y);
+			Result res = s.processAttack(x, y, this.currentWeapon);
 			if(res != null) {
 				attackResult = res;
 				break;
 			}
 		}
+
+
 
 		int totalHealth = 0;
 		for(Ship s : ships){
@@ -205,10 +211,12 @@ public class Board {
 			attackResult.setResult(AtackStatus.SURRENDER);
 		}
 
+		if(attackResult.getResult() == AtackStatus.SUNK){
+			this.currentWeapon = Weapon.LASER;
+		}
+
 		this.attacks.add(attackResult);
 		return attackResult;
-
-       
 	}
 
 	public List<Ship> getShips() {
@@ -286,9 +294,7 @@ public class Board {
 	public List<Sonar> getSonarpulses() {
 		return this.sonarpulses;
 	}
-	//public void setSonarpulses(List<Square> pulses){
-	//	this.sonarpulses = pulses;
-	//}
+
 	public void setSonarpulses(List<Sonar> pulses){
 		this.sonarpulses = pulses;
 	}

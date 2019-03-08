@@ -6,12 +6,15 @@ public class Square {
 	private int row;
 	private char column;
 	private boolean hit;
+	private boolean submerged;
 
 	public Square() {
 		this.hit = false;
+		this.submerged = false;
 	}
 
 	public Square(int row, char column) {
+		this();
 		this.row = row;
 		this.column = column;
 	}
@@ -38,6 +41,15 @@ public class Square {
 
 	public void setHit(boolean b) {
 		this.hit = b;
+	}
+
+
+	public boolean getSubmerged() {
+		return this.submerged;
+	}
+
+	public void setSubmerged(boolean s) {
+		this.submerged = s;
 	}
 
 	@Override
