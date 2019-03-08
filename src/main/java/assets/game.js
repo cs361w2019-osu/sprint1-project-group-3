@@ -121,9 +121,9 @@ function redrawGrid() {
     }));
 
     // TOGGLE FOR HACKS
-     game.opponentsBoard.ships.forEach((ship) => ship.occupiedSquares.forEach((square) => {
-         document.getElementById("opponent").rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("occupied");
-     }));
+//     game.opponentsBoard.ships.forEach((ship) => ship.occupiedSquares.forEach((square) => {
+//         document.getElementById("opponent").rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("occupied");
+//     }));
 
     markHits(game.opponentsBoard, "opponent", "You won the game");
     markHits(game.playersBoard, "player", "You lost the game");
@@ -229,16 +229,36 @@ function sonarSweep() {
         for(let i = 0; i < 5; i++) {
             let width = 1 + 2 * ((i < 2) ? i : 4 - i);
 			for(let j = -Math.floor(width/2); j < Math.floor(width/2)+1; j++) {
-                let cell;
-                let tableRow = table.rows[row - 2 + i];
+
+
+                let x = row - 2 + i;
+                let y = col + j;
+
+                if(x < 0 || x > 10 || y < 'A' || y > 'J') {
+                    continue;
+                }
+
+                  let cell;
+                  let tableRow = table.rows[x];
+
                 if(tableRow === undefined) {
-                    break;
+                    continue;
                 }
-                cell = tableRow.cells[col + j];
+
+                let t = col + j;
+                if(t < 0) {
+                    t = 0;
+                }
+
+                cell = tableRow.cells[y];
                 if(cell === undefined) {
-                    break;
+                    continue;
                 }
-                cell.classList.toggle("revealed");
+                if(cell.classList.contains("revealed")) {
+                    cell.classList.remove("revealed");
+                } else {
+                    cell.classList.add("revealed");
+                }
 			}
 		}
     }
