@@ -9,7 +9,7 @@ var shipType = [];
 var vertical;
 
 var sunkShips = 0;
-var
+var movesRemaining = 2;
 
 
 function showError(errorText) {
@@ -111,9 +111,9 @@ function redrawGrid() {
     }));
 
     // TOGGLE FOR HACKS
-    // game.opponentsBoard.ships.forEach((ship) => ship.occupiedSquares.forEach((square) => {
-    //     document.getElementById("opponent").rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("occupied");
-    // }));
+     game.opponentsBoard.ships.forEach((ship) => ship.occupiedSquares.forEach((square) => {
+         document.getElementById("opponent").rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.add("occupied");
+     }));
 
     markHits(game.opponentsBoard, "opponent", "You won the game");
     markHits(game.playersBoard, "player", "You lost the game");
