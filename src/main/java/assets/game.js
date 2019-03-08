@@ -1,6 +1,7 @@
 
 var isSetup = true;
 var sonar = false;
+var displayedLaser = false;
 var pulsesRemaining = 2;
 var placedShips = 0;
 var MAX_SHIPS = 4;
@@ -41,15 +42,20 @@ function markHits(board, elementId, surrenderText) {
             className = "miss";
         } else if (attack.result === "HIT"){
                 className = "hit";
+                document.getElementById(elementId).rows[attack.location.row-1].cells[attack.location.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.remove("miss");
         } else if (attack.result === "SUNK") {
 
             // reveal the sonar button
             if(pulsesRemaining === 2) {
                 document.getElementById("use_sonar").classList.remove("hidden");
             }
+            if(!displayedLaser){
+                showError("Laser now available");
+                displayedLaser=true;
+            }
 
-            document.getElementById(elementId + "-" + attack.ship.shipType.toLowerCase()).classList.add("crossed-out");                                  //if sunken, cross out ship name
-            document.getElementById(elementId + "-" + attack.ship.shipType.toLowerCase()).classList.add("secondary-color");                              //also changes color of said ship name
+            document.getElementById(elementId + "-" + attack.ship.shipType.toLowerCase()).classList.add("crossed-out");                                 //if sunken, cross out ship name
+            document.getElementById(elementId + "-" + attack.ship.shipType.toLowerCase()).classList.add("secondary-color");                             //also changes color of said ship name
             className = "sink";
             attack.ship.occupiedSquares.forEach((square) => {                                                                                           //if ship sunk, grab all occupied squares of ship
                 document.getElementById(elementId).rows[square.row-1].cells[square.column.charCodeAt(0) - 'A'.charCodeAt(0)].classList.remove("miss");  //set all ship elements to sink class name

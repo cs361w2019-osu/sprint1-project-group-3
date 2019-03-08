@@ -1,6 +1,6 @@
 package cs361.battleships.models;
 
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import cs361.battleships.ShipFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,8 @@ public class Board {
 	private List<Result> attacks;   				
 	private List<Sonar>  sonarpulses;
 
+	@JsonProperty
+	private Weapon currentWeapon;
 	/*
 	DO NOT change the signature of this method. It is used by the grading scripts.
 	 */
@@ -19,6 +21,8 @@ public class Board {
 		this.ships = new ArrayList<Ship>();
 		this.attacks = new ArrayList<Result>();
 		this.sonarpulses = new ArrayList<Sonar>();
+
+		this.currentWeapon = Weapon.CANNON;
 	}
 
 	/*
@@ -135,12 +139,14 @@ public class Board {
 		}
 
 		for(Ship s : this.ships) {
-			Result res = s.processAttack(x, y);
+			Result res = s.processAttack(x, y, this.currentWeapon);
 			if(res != null) {
 				attackResult = res;
 				break;
 			}
 		}
+
+
 
 		int totalHealth = 0;
 		for(Ship s : ships){
@@ -148,6 +154,10 @@ public class Board {
 		}
 		if(totalHealth<=0){
 			attackResult.setResult(AtackStatus.SURRENDER);
+		}
+
+		if(attackResult.getResult() == AtackStatus.SUNK){
+			this.currentWeapon = Weapon.LASER;
 		}
 
 		this.attacks.add(attackResult);
@@ -169,15 +179,10 @@ public class Board {
 
 	}
 
-	/*public List<Square> getSonarpulses(){
-		return this.sonarpulses;
-	}*/
 	public List<Sonar> getSonarpulses() {
 		return this.sonarpulses;
 	}
-	//public void setSonarpulses(List<Square> pulses){
-	//	this.sonarpulses = pulses;
-	//}
+
 	public void setSonarpulses(List<Sonar> pulses){
 		this.sonarpulses = pulses;
 	}

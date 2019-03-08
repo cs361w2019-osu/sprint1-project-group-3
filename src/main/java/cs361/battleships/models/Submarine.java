@@ -41,11 +41,14 @@ public class Submarine extends Ship {
 
 
     @Override
-    public Result processAttack(int x, char y) {
+    public Result processAttack(int x, char y, Weapon w) {
         if(isSubmerged()) {
+            if(w == Weapon.LASER){
+                return super.processAttack(x,y,w);
+            }
             return null;
         } else {
-            return super.processAttack(x, y);
+            return super.processAttack(x, y, w);
         }
     }
 
